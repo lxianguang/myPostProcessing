@@ -1,54 +1,44 @@
 clear;clc;close all
 %% read data
-wirte.name = 'figure02';
-read.data1 = importdata('Deng2016.plt').data;
-read.data2 = importdata('Koochesfahani1989.plt').data;
-read.data3 = importdata('Koochesfahani2009.plt').data;
-read.data4 = importdata('Mackowski2015.plt').data;
-read.data5 = importdata('PresentNACA0015.plt').data;
-read.data6 = importdata('Ramamurti2001.plt').data;
-% data fitting
-p1 = polyfit(read.data2(:,1), read.data2(:,2), 3);
-p2 = polyfit(read.data5(:,1), read.data5(:,2), 3);
-x0 = linspace(0, 15, 151);
-y1 = polyval(p1, x0);
-y2 = polyval(p2, x0);
+wirte.name = 'example';
+read.data1 = importdata('.\data\force1.dat').data;
+read.data2 = importdata('.\data\force2.dat').data;
+% data processing
+Fref = 0.5*1000*1^2*1;
+[fourier.fre1, fourier.amp1] = myFFT(read.data1(1000:end,1), read.data1(1000:end,3)/Fref);
+[fourier.fre2, fourier.amp2] = myFFT(read.data2(1000:end,1), read.data2(1000:end,3)/Fref);
 %% plot figures
 defaultSettings();
-% creatBlankFigure([0.05 0.15 0.85 0.55])
-% position.axe1 = [0.190 0.24 0.30 0.60];
-% position.axe2 = [0.555 0.24 0.30 0.60];
-creatBlankFigure([0.25 0.15 0.50 0.60])
-position.axe1 = [0.22 0.21 0.60 0.64];
+creatBlankFigure([0.30 0.00 0.40 0.90])
+position.axe1 = [0.250 0.58 0.55 0.30];
+position.axe2 = [0.250 0.19 0.55 0.30];
 % plot figure1 ===========================================================
 set(axes,'position',position.axe1);
-scatter(read.data2(:,1), read.data2(:,2),'ks', 'filled', 'SizeData', 64);
+bar(fourier.fre1, fourier.amp1, 'FaceColor', [0.2 0.6 0.8], 'EdgeColor', 'k', 'BarWidth', 0.5);
 hold on; box off;
-scatter(read.data3(:,1), read.data3(:,2),'kd', 'SizeData', 64, 'LineWidth', 1);
-scatter(read.data4(:,1), read.data4(:,2),'ks', 'SizeData', 64, 'LineWidth', 1);
-scatter(read.data6(:,1), read.data6(:,2),'kv', 'SizeData', 64, 'LineWidth', 1);
-scatter(read.data1(:,1), read.data1(:,2),'kd', 'filled', 'SizeData', 64);
-scatter(read.data5(:,1), read.data5(:,2),'ro', 'filled', 'SizeData', 56);
-plot(x0, y1, 'k', 'LineWidth', 1.6);
-plot(x0, y2, 'r', 'LineWidth', 1.6);
+annotation('textbox', [0.57,0.75,0.12,0.05], 'String', '0.689', 'FontSize', 14, 'LineStyle', 'None', 'Margin', 0);
+% plot(fourier.fre1, fourier.amp1, 'r', 'LineWidth', 1.6);
 % line([10.25 10.25], [-2 2], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-% annotation('textbox',[0.222,0.26,0.12,0.05],'String','A','FontSize', 16,'LineStyle','None','Margin',0);
 % plot(read.data1(:,1), read.data1(:,3), '^-', 'Color', 'm', 'MarkerSize', 6, 'MarkerFaceColor', 'm');
 % scatter(read.data2(:,1)/pi*2, read.data2(:,2),'ro', 'filled', 'SizeData', 48);
-setAxis(gca, [0 15 -0.1 0.3], 5, 0.1)
-setLabels('$k$','$C_D$','')
-gd=legend('Koochesfahani(1989), NACA0012, Re=12000, EXP', ...
-          'Koochesfahani(2009), NACA0012, Re=12600, EXP', ...
-          'Mackowski(2015), NACA0012, Re=12000, EXP', ...
-          'Ramamurti(2001), NACA0012, Re=12000, CFD', ...
-          'Deng(2016), NACA0015, Re=12000, CFD', ...
-          'Present, NACA0015, Re=12000, CFD', ...
-          'Orientation', 'vertical', 'Interpreter', 'latex', 'FontSize', 12);
-gd.Position = [0.43,0.65,0.12,0.12];
-gd.NumColumns = 1;
+setAxis(gca, [0.3 0.9 0 0.2], 0.1, 0.05)
+setLabels('$cf/U_{\infty}$','$Amp/c$','')
+% gd=legend('Without cylinder', ...
+%           'Behind cylinder', ...
+%           'Orientation', 'vertical', 'Interpreter', 'tex', 'FontName', 'Times New Roman', 'FontSize', 16);
+% gd.Position = [0.2005, 0.72, 0.28, 0.08];
+% gd.NumColumns = 2;
+% plot figure2 ===========================================================
+set(axes,'position',position.axe2);
+bar(fourier.fre2, fourier.amp2, 'FaceColor', [0.2 0.6 0.8], 'EdgeColor', 'k', 'BarWidth', 0.5);
+hold on; box off;
+annotation('textbox',[0.49,0.37,0.12,0.05], 'String', '0.602', 'FontSize', 14, 'LineStyle', 'None', 'Margin', 0);
+annotation('textbox',[0.57,0.31,0.12,0.05], 'String', '0.689', 'FontSize', 14, 'LineStyle', 'None', 'Margin', 0);
+setAxis(gca, [0.3 0.9 0 0.8], 0.1, 0.2)
+setLabels('$cf/U_{\infty}$','$Amp/c$','')
 % write pdf ==============================================================
+addString();
 imwrite(getframe(gcf).cdata, [wirte.name '.png']);
-% addString();
 exportgraphics(gcf,[wirte.name '.pdf'],'resolution', 300, 'ContentType', 'vector') 
 % functions ==============================================================
 function [] = defaultSettings()
@@ -96,6 +86,6 @@ function [] = setLabels(XLabel,YLabel,Title)
 end
 
 function [] = addString()
-    annotation('textbox',[0.135,0.85,0.2,0.05],'String','(\it{a}\rm{)}','FontSize', 20,'LineStyle','None','Margin',0);
-    annotation('textbox',[0.504,0.85,0.2,0.05],'String','(\it{b}\rm{)}','FontSize', 20,'LineStyle','None','Margin',0);
+    annotation('textbox',[0.140, 0.86, 0.2, 0.05],'String','(\it{a}\rm{)}','FontSize', 18,'LineStyle','None','Margin',0);
+    annotation('textbox',[0.140, 0.47, 0.2, 0.05],'String','(\it{b}\rm{)}','FontSize', 18,'LineStyle','None','Margin',0);
 end

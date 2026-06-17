@@ -1,55 +1,44 @@
 clear;clc;close all
 %% read data
-wirte.name = '3-12';
-read.data1 = importdata('..\data\placement\leadingS0.00.plt').data;
-read.data2 = importdata('..\data\placement\trailingS0.00.plt').data;
-read.data3 = importdata('..\data\placement\trailingS0.50.plt').data;
-read.data4 = importdata('..\data\force\S0.00.plt').data;
-read.data5 = importdata('..\data\force\S0.50.plt').data;
+wirte.name = 'example';
+read.data1 = importdata('.\data\force1.dat').data;
+read.data2 = importdata('.\data\force2.dat').data;
+% data processing
+Fref = 0.5*1000*1^2*1;
+[fourier.fre1, fourier.amp1] = myFFT(read.data1(1000:end,1), read.data1(1000:end,3)/Fref);
+[fourier.fre2, fourier.amp2] = myFFT(read.data2(1000:end,1), read.data2(1000:end,3)/Fref);
 %% plot figures
 defaultSettings();
 creatBlankFigure([0.05 0.15 0.85 0.55])
 position.axe1 = [0.190 0.24 0.30 0.60];
 position.axe2 = [0.555 0.24 0.30 0.60];
-position.axe3 = [0.680 0.30 0.15 0.30];
 % plot figure1 ===========================================================
 set(axes,'position',position.axe1);
-plot(read.data1(:,1)/pi*2, read.data1(:,3), 'k');
+bar(fourier.fre1, fourier.amp1, 'FaceColor', [0.2 0.6 0.8], 'EdgeColor', 'k', 'BarWidth', 0.5);
 hold on; box off;
-plot(read.data2(:,1)/pi*2, read.data2(:,3), 'r');
-plot(read.data3(:,1)/pi*2, read.data3(:,3), 'b--');
-line([10.25 10.25], [-2 2], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-line([10.50 10.50], [-2 2], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-line([10.75 10.75], [-2 2], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-annotation('textbox',[0.222,0.26,0.12,0.05],'String','A','FontSize', 16,'LineStyle','None','Margin',0);
-annotation('textbox',[0.297,0.26,0.12,0.05],'String','B','FontSize', 16,'LineStyle','None','Margin',0);
-annotation('textbox',[0.372,0.26,0.12,0.05],'String','C','FontSize', 16,'LineStyle','None','Margin',0);
-annotation('textbox',[0.447,0.26,0.12,0.05],'String','D','FontSize', 16,'LineStyle','None','Margin',0);
+annotation('textbox', [0.37,0.61,0.12,0.05], 'String', '0.689', 'FontSize', 14, 'LineStyle', 'None', 'Margin', 0);
+% plot(fourier.fre1, fourier.amp1, 'r', 'LineWidth', 1.6);
+% line([10.25 10.25], [-2 2], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
 % plot(read.data1(:,1), read.data1(:,3), '^-', 'Color', 'm', 'MarkerSize', 6, 'MarkerFaceColor', 'm');
 % scatter(read.data2(:,1)/pi*2, read.data2(:,2),'ro', 'filled', 'SizeData', 48);
-setAxis(gca, [10 11 -1 1], 0.25, 0.5)
-setLabels('$t/T$','$y$','')
-gd=legend('$G^*=0.0,~y_l$','$G^*=0.0,~y_t$','$G^*=0.5,~y_t$', ...
-          'Orientation', 'vertical', 'Interpreter', 'latex');
-gd.Position = [0.366,0.700,0.12,0.12];
-gd.NumColumns = 1;
+setAxis(gca, [0.3 0.9 0 0.2], 0.1, 0.05)
+setLabels('$cf/U_{\infty}$','$Amp/c$','')
+% gd=legend('Without cylinder', ...
+%           'Behind cylinder', ...
+%           'Orientation', 'vertical', 'Interpreter', 'tex', 'FontName', 'Times New Roman', 'FontSize', 16);
+% gd.Position = [0.2005, 0.72, 0.28, 0.08];
+% gd.NumColumns = 2;
 % plot figure2 ===========================================================
 set(axes,'position',position.axe2);
-plot(read.data4(:,1)/pi*2, read.data4(:,2), 'r');
+bar(fourier.fre2, fourier.amp2, 'FaceColor', [0.2 0.6 0.8], 'EdgeColor', 'k', 'BarWidth', 0.5);
 hold on; box off;
-plot(read.data5(:,1)/pi*2, read.data5(:,2), 'b');
-line([10.25 10.25], [-4 4], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-line([10.50 10.50], [-4 4], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-line([10.75 10.75], [-4 4], 'Color', 'k', 'linewidth', 1.2, 'linestyle', '--');
-setAxis(gca, [10 11 -3 3], 0.25, 1.5)
-setLabels('$t/T$','$C_D$','')
-gd=legend('$G^*=0.0$','$G^*=0.5$', ...
-          'Orientation', 'vertical', 'Interpreter', 'latex');
-gd.Position = [0.752,0.73,0.10,0.10];
-gd.NumColumns = 1;
+annotation('textbox',[0.690,0.640,0.12,0.05], 'String', '0.602', 'FontSize', 14, 'LineStyle', 'None', 'Margin', 0);
+annotation('textbox',[0.732,0.525,0.12,0.05], 'String', '0.689', 'FontSize', 14, 'LineStyle', 'None', 'Margin', 0);
+setAxis(gca, [0.3 0.9 0 0.8], 0.1, 0.2)
+setLabels('$cf/U_{\infty}$','$Amp/c$','')
 % write pdf ==============================================================
-imwrite(getframe(gcf).cdata, [wirte.name '.png']);
 addString();
+imwrite(getframe(gcf).cdata, [wirte.name '.png']);
 exportgraphics(gcf,[wirte.name '.pdf'],'resolution', 300, 'ContentType', 'vector') 
 % functions ==============================================================
 function [] = defaultSettings()
